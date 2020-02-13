@@ -1,0 +1,60 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width-device-width, initial-scale-1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie-edge">
+	<title>Pie Chart</title>
+	<script src="https://d3js.org/d3.v3.min.js"></script>
+</head>
+<body>
+	<div id="pie"></div>
+	<script>
+		var width = 450,
+			height = 450,
+			outerRadius = Math.min(width, height)/2,
+			innerRadius = outerRadius *.5,
+			color = d3.scale.category20();
+		
+		d3.tsv("data.tsv", type, function(error, data){
+			var vis = d3.select("#pie")
+						.append("svg:svg")
+						.attr("height", height)
+						.append("svg:g")
+						.attr("transform", "translate("+outerRadius + "," + outerRadius+")")
+						.data([data]);
+			
+			var arc = d3.svg.arc().innerRadius(innerRadius).outerRadius(outerRadius);
+			var pie = d3.layout.pie().value(function(d){return d.frequency;});
+			
+			var arcs = vis.selectAll("g.slice")
+						.data(pie)
+						.enter().append("svg:g")
+						.attr("class", "slice");
+			arcs.append("svg:path")
+				.attr("d", arc)
+				.attr("fill", function(d, i){return color(i);});
+			arcs.append("svg:text")
+				.attr("dy", ".35em")
+				.attr("text-anchor", "middle")
+				.attr("transform", function(d){return "translate(" + arc.centroid(d) + ")rotate(" + angle(d)+")";})
+				.text(function(d){return d.data.letter});
+			
+			vis.append("svg:text")
+			.attr("dy", ".35em")
+			.attr("text-anchor", "middle")
+			.text("주소")
+			.attr("class", "title")	
+				
+		});
+		function angle(d){
+			var a = (d.startAngle + d.endAngle) * 90 /Math.PI -90;
+			return a > 90 ? a -100 : a;
+		}
+		
+		function type(d){
+			d.frequency = +d.frequency;
+			return d;
+		}
+	</script>
+</body>
+</html>
