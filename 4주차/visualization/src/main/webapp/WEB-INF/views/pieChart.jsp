@@ -11,6 +11,7 @@
  
 </head>
 <body>
+	<select name="number" id="num"></select>
     <button id="drawChart">Create</button>
     <figure class="highcharts-figure">
 	    <div id="container"></div>
